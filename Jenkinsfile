@@ -10,7 +10,7 @@ pipeline{
     stages{
         stage('Clean Workspace') {
             steps{
-                clwanWs()
+                cleanWs()
             }
         }
         stage('Git Checkout'){
