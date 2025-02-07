@@ -15,26 +15,26 @@ pipeline{
         }
         stage('Git Checkout'){
             steps{
-                checkout scmGit(branches: [[name: '*/main']], extensions: [], userRemoteConfigs: [[url: 'https://github.com/sdeep1096/Prime-Video-Clone']])
+                git branch: 'main', url: 'https://github.com/sdeep1096/Prime-Video-Clone-Deployment.git'
             }
         }
-        stage('Sonarqube Analysis'){
+        stage("Sonarqube Analysis "){
             steps{
-                withSonarQubeEnv('sonar-server'){
+                withSonarQubeEnv('sonar-server') {
                     sh ''' $SCANNER_HOME/bin/sonar-scanner -Dsonar.projectName=amazon-prime \
                     -Dsonar.projectKey=amazon-prime '''
                 }
             }
         }
-        stage('quality gate'){
-            steps{
-               script {
+        stage("quality gate"){
+           steps {
+                script {
                     waitForQualityGate abortPipeline: false, credentialsId: 'sonar-token' 
-                } 
-            }
+                }
+            } 
         }
-        stage('Install NPM dependencies'){
-            steps{
+        stage("Install NPM Dependencies") {
+            steps {
                 sh "npm install"
             }
         }
@@ -44,8 +44,8 @@ pipeline{
                 dependencyCheckPublisher pattern: '**/dependency-check-report.xml'
             }
         }
-        stage('Trivy File Scan'){
-            steps{
+        stage ("Trivy File Scan") {
+            steps {
                 sh "trivy fs . > trivy.txt"
             }
         }
