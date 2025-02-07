@@ -56,13 +56,15 @@ pipeline{
         }
         stage('Push Image to Docker Hub'){
             steps{
-                sh "docker push briarheart1096/amazon-prime:latest"
+                withDockerRegistry(credentialsId: 'docker-cred'){
+                    sh "docker push briarheart1096/amazon-prime:latest"
+                }
             }
         }
         stage('Docker Scout Image') {
             steps {
                 script{
-                   withDockerRegistry(credentialsId: 'docker', toolName: 'docker'){
+                   withDockerRegistry(credentialsId: 'docker-cred', toolName: 'docker'){
                        sh 'docker-scout quickview briarheart1096/amazon-prime:latest'
                        sh 'docker-scout cves briarheart1096/amazon-prime:latest'
                        sh 'docker-scout recommendations briarheart1096/amazon-prime:latest'
@@ -95,7 +97,7 @@ pipeline{
                 </body>
                 </html>
             """,
-            to: 'provide_your_Email_id_here',
+            to: 'sdipghosh1096@gmail.com',
             mimeType: 'text/html',
             attachmentsPattern: 'trivy.txt'
         }
